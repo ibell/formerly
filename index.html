@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/*.inputcontainer {
+  position: relative;
+}*/
+
+.input.input {
+  color: #00ff00;
+  size: 5;
+}
+
+.output {
+  color: #ff0000;
+}
+
+img { 
+  opacity: 0.5;
+}
+
+.input_Te {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  font-size: 18px;
+}
+
+.input_Tc {
+  position: absolute;
+  top: 100px;
+  left: 0px;
+  font-size: 18px;
+}
+
+.output_COP {
+  position: absolute;
+  top: 250px;
+  left: 200px;
+  font-size: 18px;
+}
+
+</style>
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+</head>
+
+<body>
+
+<div class="inputcontainer">
+  <img src="static/pic.png" alt="CP" width="400" height="300">
+  <div class="input_Te">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
+  <div class="input_Tc">\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
+  <div class="output_COP">COP [-]: <input type="text" value="?" id="COP" class="output"></div>
+  <input type="button" id="buttonExecute" value="Run!" position="absolute" left="50px">
+</div>
+
+
+<script>
+$( "#buttonExecute" ).click(function() {
+  
+  // Find all the elements that are input with class input
+  var input_nodes = $( "div.inputcontainer :input.input" );
+  
+  // Extract their values
+  var input_values = {};
+  input_nodes.each(function(i){
+    input_values[this.id] = this.value;
+  });
+
+  // Now we have a set of key-value pairs where the first entry is 
+  // the id of the input field, and the second is the value
+  // as a string
+    
+  // For debugging purposes, dump the inputs
+  //var s = JSON.stringify(input_values, null, '  ');
+  //alert(s);
+
+  // Asynchronously make the call to the calculate
+  // service, returning and populating the values when 
+  // complete
+  $.ajax({
+    method: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: "calculate",
+    data: JSON.stringify(input_values) ,
+    dataType: "json"
+  })
+  .done(function( output_values ) {
+    // Success! Populate the output nodes
+    $( "div.inputcontainer :input.output" ).each(
+      function(i){
+        this.value = output_values[this.id];
+      }
+    );
+  })
+  .fail(function( jqXHR, textStatus ) {
+    // Failure... 
+    alert( "Request failed: " + textStatus );
+  });
+  
+});
+</script>
+
+</body>
+</html>
