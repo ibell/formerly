@@ -52,7 +52,7 @@ img {
 <body>
 
 <div class="inputcontainer">
-  <img src="static/pic.png" alt="CP" width="400" height="300">
+  <img src="{{url_for('static', filename='pic.png')}}" alt="CP" width="400" height="300">
   <div class="input_Te">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
   <div class="input_Tc">\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
   <div class="output_COP">COP [-]: <input type="text" value="?" id="COP" class="output"></div>

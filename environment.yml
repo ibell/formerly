@@ -1,0 +1,6 @@
+name: flaskwebview
+dependencies:
+  - python=3.6
+  - pip:
+    - Flask
+    - pywebview
