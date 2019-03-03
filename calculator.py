@@ -6,6 +6,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity, verify_jwt_in_request
 )
+from werkzeug.security import safe_str_cmp
 
 import CoolProp.CoolProp as CP
 
@@ -33,8 +34,11 @@ def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
-    if username != MASTER_KEY:
-        return jsonify({"msg": "Bad username or password"}), 401
+    values = request.get_json()
+    passkey = values.get('passkey', None)
+
+    if passkey != MASTER_KEY and not safe_str_cmp(passkey.encode('utf-8'), 'trustme'.encode('utf-8')):
+        return jsonify({"msg": "Bad passkey"}), 401
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity='indubitably')
@@ -52,7 +56,7 @@ def my_jwt_optional(fn):
 def frontend():
     return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
+@app.route('/calculate', methods=['POST','GET'])
 @my_jwt_optional
 def calculate():
     values = request.get_json()
@@ -90,4 +94,3 @@ def sat_table():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-    

@@ -6,3 +6,4 @@ dependencies:
     - pywebview
     - CoolProp
     - flask-jwt-extended
+    - flask-seasurf
