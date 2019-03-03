@@ -4,3 +4,5 @@ dependencies:
   - pip:
     - Flask
     - pywebview
+    - CoolProp
+    - flask-jwt-extended

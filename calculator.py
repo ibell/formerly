@@ -1,17 +1,65 @@
+from functools import wraps
+import os
+
 from flask import Flask, request, jsonify, current_app, url_for, render_template
-app = Flask(__name__)
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity, verify_jwt_in_request
+)
+
 import CoolProp.CoolProp as CP
+
+app = Flask(__name__)
+
+# Setup the Flask-JWT-Extended extension
+app.config['JWT_SECRET_KEY'] = os.urandom(20)
+jwt = JWTManager(app)
+
+VERIFY = os.environ.get('JWT_VERIFY', False)
+MASTER_KEY = os.urandom(20)
+
+def set_verify(value):
+    global VERIFY
+    VERIFY = value
+
+def verification_on():
+    return VERIFY
+
+# Provide a method to create access tokens. The create_access_token()
+# function is used to actually generate the token, and you can return
+# it to the caller however you choose.
+@app.route('/login', methods=['POST'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    if username != MASTER_KEY:
+        return jsonify({"msg": "Bad username or password"}), 401
+
+    # Identity can be any data that is json serializable
+    access_token = create_access_token(identity='indubitably')
+    return jsonify(access_token=access_token), 200
+
+def my_jwt_optional(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if verification_on():
+            verify_jwt_in_request()
+        return fn(*args, **kwargs)
+    return wrapper
 
 @app.route('/')
 def frontend():
     return render_template('index.html')
 
 @app.route('/calculate', methods=['POST'])
+@my_jwt_optional
 def calculate():
     values = request.get_json()
     return jsonify({'COP': float(values['Te']) + float(values['Tc'])})
 
 @app.route('/sat_table', methods=['POST'])
+@my_jwt_optional
 def sat_table():
     values = request.get_json()
     
@@ -42,3 +90,4 @@ def sat_table():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
+    

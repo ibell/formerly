@@ -3,16 +3,20 @@ import logging
 import webview
 from time import sleep
 import os
+from flask_seasurf import SeaSurf
 
 server_lock = Lock()
 here = os.path.dirname(__file__)
 
 logger = logging.getLogger(__name__)
 
-from calculator import app
+from calculator import app, set_verify, verification_on
+set_verify(False)
+
 def run_server():
     app.root_path = here
     app.run(host="127.0.0.1", port=23948, threaded=True)
+    csrf = SeaSurf(app)
 
 def url_ok(url, port):
     from http.client import HTTPConnection
