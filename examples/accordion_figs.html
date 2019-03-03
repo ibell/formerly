@@ -1,0 +1,48 @@
+</div><head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion({
+      collapsible: true
+    });
+  } );
+  </script>
+</head>
+
+<body>
+  <div id="accordion">
+    <h3>Plot 1</h3> 
+      <div id="myDiv1" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <h3>Plot 2</h3> 
+      <div id="myDiv2" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <h3>Plot 3</h3> 
+      <div id="myDiv3" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <h3>Plot 4</h3> 
+      <div id="myDiv4" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+  </div>
+
+  <script>
+     var trace1 = {
+      x: [.01, .1, 1, 10, 100], 
+      y: [1000, 500, 250, 125, 62.5], 
+      type: 'scatter'
+    };
+    var data = [trace1];
+    var layout = {
+      xaxis: {
+        type: 'log',
+        autorange: true
+      }, 
+      yaxis: {
+        type: 'log', 
+        autorange: true
+      }
+    };
+    for (var i = 1; i < 5; ++i){
+      Plotly.plot('myDiv'+i, data, layout, {showSendToCloud: true});
+    }
+  </script>
+</body>
