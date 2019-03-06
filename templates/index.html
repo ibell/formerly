@@ -79,6 +79,13 @@ $( "#buttonExecute" ).click(function() {
   //var s = JSON.stringify(input_values, null, '  ');
   //alert(s);
 
+  var jwt_setter = null;
+  if (typeof(pywebview) !== 'undefined'){
+    jwt_setter = function (xhr) { //Include the bearer token in header
+        xhr.setRequestHeader("Authorization", 'Bearer ' + pywebview.authToken);
+    }
+  };
+
   // Asynchronously make the call to the calculate
   // service, returning and populating the values when 
   // complete
@@ -86,7 +93,8 @@ $( "#buttonExecute" ).click(function() {
     method: "POST",
     contentType: "application/json; charset=utf-8",
     url: "calculate",
-    data: JSON.stringify(input_values) ,
+    data: JSON.stringify(input_values),
+    beforeSend: jwt_setter,
     dataType: "json"
   })
   .done(function( output_values ) {
