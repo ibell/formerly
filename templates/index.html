@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 /*.inputcontainer {
   position: relative;
 }*/
+
+.inputcontainer {
+    width:400px;
+    height:400px;
+    background-color:white;
+    border:2px solid blue;
+    position:relative;
+}
 
 .input.input {
   color: #00ff00;
@@ -19,25 +28,33 @@ img {
   opacity: 0.5;
 }
 
-.input_Te {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  font-size: 18px;
+.navbar {
+  width: 100%;
+  background-color: #555;
+  overflow: auto;
 }
 
-.input_Tc {
-  position: absolute;
-  top: 100px;
-  left: 0px;
-  font-size: 18px;
+.navbar a {
+  float: left;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
 }
 
-.output_COP {
-  position: absolute;
-  top: 250px;
-  left: 200px;
-  font-size: 18px;
+.navbar a:hover {
+  background-color: #000;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+@media screen and (max-width: 500px) {
+  .navbar a {
+    float: none;
+    display: block;
+  }
 }
 
 </style>
@@ -48,20 +65,26 @@ img {
 </script>
 </head>
 
-
 <body>
+
+<div class="navbar">
+  <a class="active" href="#"><i class="fa fa-fw fa-home"></i> Home</a> 
+  <a href="#"><i class="fa fa-fw fa-search"></i> Search</a> 
+  <a href="mailto:ian.h.bell@gmail.com"><i class="fa fa-fw fa-envelope"></i> Contact</a> 
+  <a href="#"><i class="fa fa-fw fa-user"></i> Login</a>
+</div>
 
 <div class="inputcontainer">
   <img src="{{url_for('static', filename='pic.png')}}" alt="CP" width="400" height="300">
-  <div class="input_Te">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
-  <div class="input_Tc">\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
-  <div class="output_COP">COP [-]: <input type="text" value="?" id="COP" class="output"></div>
-  <input type="button" id="buttonExecute" value="Run!" position="absolute" left="50px">
+  <div style="position: absolute; top: 100px; left: 50px; font-size: 14px">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
+  <div style="position: absolute; top: 0px; left: 50px; font-size: 14px" >\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
+  <div style="position: absolute; top: 50px; right: 50px; font-size: 14px">COP [-]: <input type="text" value="?" id="COP" class="output"></div>
+  <input type="button" id="buttonExecute" value="Run!" style="position: absolute; right: 0px; bottom: 0px; font-size: 18px">
 </div>
 
-<input type="button" id="buttonTable" value="Run!" position="absolute" left="50px"> 
+<input type="button" id="buttonTable" value="Table!" position="absolute" left="50px"> 
 <div id="pandas_table">
-  hihihi
+  table div
 </div>
 
 <script>
