@@ -9,7 +9,7 @@
 
 .inputcontainer {
     width:400px;
-    height:400px;
+    height:300px;
     background-color:white;
     border:2px solid blue;
     position:relative;
@@ -59,7 +59,9 @@ img {
 
 </style>
 
-<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
@@ -80,14 +82,19 @@ img {
   <div style="position: absolute; top: 0px; left: 50px; font-size: 14px" >\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
   <div style="position: absolute; top: 50px; right: 50px; font-size: 14px">COP [-]: <input type="text" value="?" id="COP" class="output"></div>
   <input type="button" id="buttonExecute" value="Run!" style="position: absolute; right: 0px; bottom: 0px; font-size: 18px">
+  <input type="button" id="buttonTable" value="Table!" style="position: absolute; left: 0px; bottom: 0px; font-size: 18px"> 
 </div>
 
-<input type="button" id="buttonTable" value="Table!" position="absolute" left="50px"> 
-<div id="pandas_table">
-  table div
+<div id="dialog">
+    <div id="pandas_table"></div>
 </div>
 
 <script>
+  $( "#buttonTable" ).click( function() {
+    $( "#containerPopup").html("hihihi");
+    $( "#dialog" ).dialog();
+  } );
+
 var jwt_setter = null;
 if (typeof(pywebview) !== 'undefined'){
   jwt_setter = function (xhr) { //Include the bearer token in header
@@ -109,6 +116,7 @@ $( "#buttonTable" ).click(function() {
     // See https://docs.mathjax.org/en/v1.0/typeset.html
     var obj = document.getElementById("pandas_table");
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,obj]);
+
   })
   .fail(function( jqXHR, textStatus ) {
     // Failure... 
