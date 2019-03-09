@@ -92,7 +92,6 @@ def get_bib_html():
     e = data.entries[BibTeX_key]
     e = list(plain_style.format_entries([e]))[0]
     o = str(e.text.render(backend))
-    print(o)
     return o
 
 @app.route('/sat_table', methods=['POST'])
