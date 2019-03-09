@@ -83,6 +83,7 @@ $( "#buttonTable" ).click(function() {
     // Success! Populate the output table and render MathJax
     $( "#pandas_table" ).html(table_html);
     // Now request a re-rerender of the div
+    // See https://docs.mathjax.org/en/v1.0/typeset.html
     var obj = document.getElementById("pandas_table");
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,obj]);
   })
@@ -90,7 +91,6 @@ $( "#buttonTable" ).click(function() {
     // Failure... 
     alert( "Request failed: " + textStatus );
   });
-  
 });
 
 $( "#buttonExecute" ).click(function() {
