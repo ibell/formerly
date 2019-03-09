@@ -78,11 +78,12 @@ img {
 
 <div class="inputcontainer">
   <img src="{{url_for('static', filename='pic.png')}}" alt="CP" width="400" height="300">
-  <div style="position: absolute; top: 100px; left: 50px; font-size: 14px">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
-  <div style="position: absolute; top: 0px; left: 50px; font-size: 14px" >\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input"></div>
+  <div style="position: absolute; top: 0px; left: 0px; font-size: 14px">\(T_{\rm e}\) [K]: <input type="text" value="273" id="Te" class="input"></div>
+  <div style="position: absolute; top: 20px; left: 0px; font-size: 14px" >\(T_{\rm c}\) [K]: <input type="text" value="300" id="Tc" class="input", style="font-size: 12px", fontsize=12></div>
   <div style="position: absolute; top: 50px; right: 50px; font-size: 14px">COP [-]: <input type="text" value="?" id="COP" class="output"></div>
   <input type="button" id="buttonExecute" value="Run!" style="position: absolute; right: 0px; bottom: 0px; font-size: 18px">
   <input type="button" id="buttonTable" value="Table!" style="position: absolute; left: 0px; bottom: 0px; font-size: 18px"> 
+  <input type="button" id="buttonBibHTML" value="TeX2HTML!" style="position: absolute; left: 100px; bottom: 0px; font-size: 18px"> 
 </div>
 
 <div id="dialog">
@@ -95,19 +96,22 @@ img {
     $( "#dialog" ).dialog();
   } );
 
-var jwt_setter = null;
-if (typeof(pywebview) !== 'undefined'){
-  jwt_setter = function (xhr) { //Include the bearer token in header
-      xhr.setRequestHeader("Authorization", 'Bearer ' + pywebview.authToken);
-  }
-};
+function get_jwt_setter(){
+  var jwt_setter = null;
+  if (typeof(pywebview) !== 'undefined'){
+    jwt_setter = function (xhr) { //Include the bearer token in header
+        xhr.setRequestHeader("Authorization", 'Bearer ' + pywebview.authToken);
+    }
+  };
+  return jwt_setter;
+}
 
 $( "#buttonTable" ).click(function() {
   // Asynchronously make the call
   $.ajax({
     method: "POST",
     url: "pandas_table",
-    beforeSend: jwt_setter,
+    beforeSend: get_jwt_setter(),
   })
   .done(function( table_html ) {
     // Success! Populate the output table and render MathJax
@@ -122,6 +126,25 @@ $( "#buttonTable" ).click(function() {
     // Failure... 
     alert( "Request failed: " + textStatus );
   });
+});
+
+$( "#buttonBibHTML" ).click(function() {
+  $.ajax({
+    method: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: "get_bib_html",
+    data: JSON.stringify({key: "Span-BOOK-2000"}),
+    beforeSend: get_jwt_setter()
+  })
+  .done(function( output_values ) {
+    $( "#pandas_table" ).html(output_values);
+    $( "#pandas_table" ).dialog();
+  })
+  .fail(function( jqXHR, textStatus ) {
+    // Failure... 
+    alert( "Request failed: " + textStatus );
+  });
+  
 });
 
 $( "#buttonExecute" ).click(function() {
@@ -143,13 +166,6 @@ $( "#buttonExecute" ).click(function() {
   //var s = JSON.stringify(input_values, null, '  ');
   //alert(s);
 
-  var jwt_setter = null;
-  if (typeof(pywebview) !== 'undefined'){
-    jwt_setter = function (xhr) { //Include the bearer token in header
-        xhr.setRequestHeader("Authorization", 'Bearer ' + pywebview.authToken);
-    }
-  };
-
   // Asynchronously make the call to the calculate
   // service, returning and populating the values when 
   // complete
@@ -158,7 +174,7 @@ $( "#buttonExecute" ).click(function() {
     contentType: "application/json; charset=utf-8",
     url: "calculate",
     data: JSON.stringify(input_values),
-    beforeSend: jwt_setter,
+    beforeSend: get_jwt_setter(),
     dataType: "json"
   })
   .done(function( output_values ) {

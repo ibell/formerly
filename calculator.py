@@ -27,6 +27,22 @@ def set_verify(value):
 def verification_on():
     return VERIFY
 
+import pybtex.database.input.bibtex 
+import pybtex.plugin
+import codecs
+import latexcodec
+
+from pybtex.style.formatting import plain
+plain_style = plain.Style()
+style = pybtex.plugin.find_plugin('pybtex.style.formatting', 'plain')()
+backend = pybtex.plugin.find_plugin('pybtex.backends', 'html')()
+parser = pybtex.database.input.bibtex.Parser()
+with codecs.open("CoolPropBibTeXLibrary.bib", encoding="latex") as stream:
+    data = parser.parse_stream(stream)
+# BibTeX_key = 'Span-BOOK-2000'
+# e = list(plain_style.format_entries([data.entries[BibTeX_key]]))[0]
+# print(e.text.render(backend))
+
 # Provide a method to create access tokens. The create_access_token()
 # function is used to actually generate the token, and you can return
 # it to the caller however you choose.
@@ -67,6 +83,17 @@ def calculate():
 @my_jwt_optional
 def pandas_table():
     return pandas.DataFrame({'odds \(O\)':[1,3,5,7,9],'evens \(E\)':[2,4,6,8,10]}).to_html(index=False)
+
+@app.route('/get_bib_html', methods=['POST'])
+@my_jwt_optional
+def get_bib_html():
+    values = request.get_json()
+    BibTeX_key = values['key']
+    e = data.entries[BibTeX_key]
+    e = list(plain_style.format_entries([e]))[0]
+    o = str(e.text.render(backend))
+    print(o)
+    return o
 
 @app.route('/sat_table', methods=['POST'])
 @my_jwt_optional
