@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from werkzeug.security import safe_str_cmp
 
 import CoolProp.CoolProp as CP
+import pandas
 
 app = Flask(__name__)
 
@@ -61,6 +62,11 @@ def frontend():
 def calculate():
     values = request.get_json()
     return jsonify({'COP': float(values['Te']) + float(values['Tc'])})
+
+@app.route('/pandas_table', methods=['POST','GET'])
+@my_jwt_optional
+def pandas_table():
+    return pandas.DataFrame({'odds \(O\)':[1,3,5,7,9],'evens \(E\)':[2,4,6,8,10]}).to_html(index=False)
 
 @app.route('/sat_table', methods=['POST'])
 @my_jwt_optional

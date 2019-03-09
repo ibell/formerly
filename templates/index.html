@@ -59,7 +59,40 @@ img {
   <input type="button" id="buttonExecute" value="Run!" position="absolute" left="50px">
 </div>
 
+<input type="button" id="buttonTable" value="Run!" position="absolute" left="50px"> 
+<div id="pandas_table">
+  hihihi
+</div>
+
 <script>
+var jwt_setter = null;
+if (typeof(pywebview) !== 'undefined'){
+  jwt_setter = function (xhr) { //Include the bearer token in header
+      xhr.setRequestHeader("Authorization", 'Bearer ' + pywebview.authToken);
+  }
+};
+
+$( "#buttonTable" ).click(function() {
+  // Asynchronously make the call
+  $.ajax({
+    method: "POST",
+    url: "pandas_table",
+    beforeSend: jwt_setter,
+  })
+  .done(function( table_html ) {
+    // Success! Populate the output table and render MathJax
+    $( "#pandas_table" ).html(table_html);
+    // Now request a re-rerender of the div
+    var obj = document.getElementById("pandas_table");
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,obj]);
+  })
+  .fail(function( jqXHR, textStatus ) {
+    // Failure... 
+    alert( "Request failed: " + textStatus );
+  });
+  
+});
+
 $( "#buttonExecute" ).click(function() {
   
   // Find all the elements that are input with class input

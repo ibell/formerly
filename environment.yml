@@ -1,6 +1,7 @@
 name: flaskwebview
 dependencies:
   - python=3.6
+  - pandas
   - pip:
     - Flask
     - pywebview

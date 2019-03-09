@@ -14,3 +14,10 @@ with requests.Session() as s:
         print(res.json())
     else:
         print(res.text)
+
+
+    res = s.get('http://localhost:23948/pandas_table')
+    if res.ok:
+        print(res.text)
+    else:
+        print(res.text)

@@ -20,6 +20,7 @@ def run_server():
     csrf = SeaSurf(app)
 
 def load_window():
+    print('hi')
     # Load our page in the webview
     webview.load_url("http://127.0.0.1:23948", uid='master')
 
