@@ -1,6 +1,14 @@
-</div><head>
+<meta charset="UTF-8"> 
+<head>
+
   <!-- Plotly.js -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script> window.PlotlyConfig = {MathJaxConfig: 'local'} </script>
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML-SVG">
+  </script>
+  
+
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
@@ -38,6 +46,7 @@
       }, 
       yaxis: {
         type: 'log', 
+        title: '$a^2+b^2$',
         autorange: true
       }
     };
