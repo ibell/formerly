@@ -161,25 +161,25 @@ def sat_table():
 ##################  JOB QUEUEING  ########################
 ##########################################################
 
-@app.route('/push_job', methods=['POST'])
-@my_jwt_optional
-def push_job():
-    values = request.get_json()
-    uid = str(uuid.uuid1())
-    db.session.add(Job(uuid=uid, contents=json.dumps(values)))
-    db.session.commit()
-    return jsonify({'uuid': uid})
-
-@app.route('/push_jobs', methods=['POST'])
-@my_jwt_optional
-def push_jobs():
+def _push_jobs(jobs):
     uids = []
-    for values in request.get_json():
+    for values in jobs:
         uid = str(uuid.uuid1())
         db.session.add(Job(uuid=uid, contents=json.dumps(values)))
         uids.append(uid)
     db.session.commit()
-    return jsonify({'uuids': uids})
+    return uids
+
+@app.route('/push_job', methods=['POST'])
+@my_jwt_optional
+def push_job():
+    values = request.get_json()
+    return jsonify({'uuid': _push_jobs([values])[0]})
+
+@app.route('/push_jobs', methods=['POST'])
+@my_jwt_optional
+def push_jobs():
+    return jsonify({'uuids': _push_jobs(request.get_json())})
 
 @app.route('/get_results', methods=['POST'])
 @my_jwt_optional
