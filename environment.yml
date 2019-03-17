@@ -8,4 +8,6 @@ dependencies:
     - CoolProp
     - flask-jwt-extended
     - flask-seasurf
+    - flask-sqlalchemy
     - requests
+    - pybtex

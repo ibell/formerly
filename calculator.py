@@ -1,5 +1,10 @@
 from functools import wraps
 import os
+import uuid
+import json
+import sqlite3
+from threading import Thread
+import time
 
 from flask import Flask, request, jsonify, current_app, url_for, render_template
 from flask_jwt_extended import (
@@ -7,11 +12,30 @@ from flask_jwt_extended import (
     get_jwt_identity, verify_jwt_in_request
 )
 from werkzeug.security import safe_str_cmp
+import requests
 
 import CoolProp.CoolProp as CP
 import pandas
 
+from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)
+
+if os.path.exists('temp.db'):
+    os.remove('temp.db')
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' # See this: https://gehrcke.de/2015/05/in-memory-sqlite-database-and-flask-a-threading-trap/
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+
+class Job(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String)
+    contents = db.Column(db.String)
+class Result(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String)
+    result = db.Column(db.String)
+db.create_all()
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = os.urandom(20)
@@ -19,6 +43,7 @@ jwt = JWTManager(app)
 
 VERIFY = os.environ.get('JWT_VERIFY', False)
 MASTER_KEY = os.urandom(20)
+POLLING_FREQ = 0.1
 
 def set_verify(value):
     global VERIFY
@@ -39,6 +64,7 @@ backend = pybtex.plugin.find_plugin('pybtex.backends', 'html')()
 parser = pybtex.database.input.bibtex.Parser()
 with codecs.open("CoolPropBibTeXLibrary.bib", encoding="latex") as stream:
     data = parser.parse_stream(stream)
+
 # BibTeX_key = 'Span-BOOK-2000'
 # e = list(plain_style.format_entries([data.entries[BibTeX_key]]))[0]
 # print(e.text.render(backend))
@@ -68,6 +94,10 @@ def my_jwt_optional(fn):
             verify_jwt_in_request()
         return fn(*args, **kwargs)
     return wrapper
+
+##########################################################
+##################     ROUTES     ########################
+##########################################################
 
 @app.route('/')
 def frontend():
@@ -124,5 +154,51 @@ def sat_table():
 
     return jsonify(outputs)
 
+##########################################################
+##################  JOB QUEUEING  ########################
+##########################################################
+
+@app.route('/push_job', methods=['POST'])
+@my_jwt_optional
+def push_job():
+    values = request.get_json()
+    uid = str(uuid.uuid1())
+    db.session.add(Job(uuid=uid, contents=json.dumps(values)))
+    db.session.commit()
+    return jsonify({'uuid': uid})
+
+def _push_job_result(uid, JSONresult):
+    print('pushing result: ', uid)
+    try:
+        job = Job.query.filter_by(uuid=uid).first()
+        db.session.add(Result(uuid=uid, result=json.dumps(JSONresult)))
+        db.session.delete(job)
+        db.session.commit()
+    except sqlite3.IntegrityError as IE:
+        print(IE)
+
+@app.route('/get_results', methods=['POST'])
+@my_jwt_optional
+def get_results():
+    return jsonify({c.uuid:c.result for c in Result.query.all()})
+
+def greedy_worker():
+    """
+    A single thread that will sequentially run all the jobs that are queued.
+    It does not share with other possible workers
+    """
+    while True:
+        time.sleep(POLLING_FREQ)
+        jobs = Job.query.all()
+        for job in jobs:
+            try:
+                j = json.loads(job.contents)
+                _push_job_result(job.uuid, {'output': float(j['Te'])+float(j['Tc'])})
+            except BaseException as BE:
+                print(BE)
+
 if __name__ == '__main__':
+    t = Thread(target=greedy_worker)
+    t.daemon = True
+    t.start()
     app.run(host='0.0.0.0', debug=True)
