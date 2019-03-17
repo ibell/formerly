@@ -1,20 +1,20 @@
 import requests
 import time
 import timeit
-N = 10000
+N = 1000
 url = 'http://localhost:5000'
-# tic = timeit.default_timer()
-# for i in range(N):
-#     res = requests.post('http://localhost:5000/push_job', json={"Te":"42.314", "Tc": "-1000"})
-#     if res.ok:
-#         jj = res.json()
-#         uid = jj['uuid']
-#     else:
-#         print(res.text)
-#         quit()
+tic = timeit.default_timer()
+for i in range(N):
+    res = requests.post('http://localhost:5000/push_job', json={"Te":"42.314", "Tc": "-1000"})
+    if res.ok:
+        jj = res.json()
+        uid = jj['uuid']
+    else:
+        print(res.text)
+        quit()
 
-# toc = timeit.default_timer()
-# print((toc-tic)/N, 's per request')
+toc = timeit.default_timer()
+print((toc-tic)/N, 's per request')
 
 tic = timeit.default_timer()
 res = requests.post(url+'/push_jobs', json=[{"Te":42.314, "Tc": -1000}]*N)
