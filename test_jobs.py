@@ -1,7 +1,7 @@
 import requests
 import time
 import timeit
-N = 1000
+N = 100
 url = 'http://localhost:5000'
 tic = timeit.default_timer()
 for i in range(N):
@@ -38,7 +38,7 @@ else:
     print(res.text)
     quit()
 
-res = requests.post(url + '/flush_results')
+# res = requests.post(url + '/flush_results')
 
 toc = timeit.default_timer()
 print((toc-tic), 'to get results')
