@@ -1,39 +1,45 @@
 <meta charset="UTF-8"> 
 <head>
-
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <script> window.PlotlyConfig = {MathJaxConfig: 'local'} </script>
+  <script type="text/javascript">
+    if (window.MathJax) {
+      MathJax.Hub.Config({SVG: {font: "STIX-Web"}});
+    }
+  </script>
   <!-- Plotly.js -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script> window.PlotlyConfig = {MathJaxConfig: 'local'} </script>
-  <script type="text/javascript" async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML-SVG">
-  </script>
-  
-
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-  $( function() {
-    $( "#accordion" ).accordion({
-      collapsible: true
-    });
-  } );
-  </script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  
 </head>
-
 <body>
   <div id="accordion">
     <h3>Plot 1</h3> 
-      <div id="myDiv1" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+      <div id="myDiv1"><!-- Plotly chart will be drawn inside this DIV --></div>
     <h3>Plot 2</h3> 
-      <div id="myDiv2" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-    <h3>Plot 3</h3> 
-      <div id="myDiv3" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-    <h3>Plot 4</h3> 
-      <div id="myDiv4" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+      <div id="myDiv2"><!-- Plotly chart will be drawn inside this DIV --></div>
   </div>
 
   <script>
-     var trace1 = {
+    
+    $( function() {
+      $( "#accordion" ).accordion({
+        collapsible: true
+      });
+    } );
+
+    // window.onresize = function() {
+    //     var obj = document.getElementById("accordion");
+    //     MathJax.Hub.Queue(["Typeset", MathJax.Hub, obj]);
+    //     $( "#accordion" ).accordion( "refresh" );
+    // };
+
+  $(window).load(function(){
+    var trace1 = {
       x: [.01, .1, 1, 10, 100], 
       y: [1000, 500, 250, 125, 62.5], 
       type: 'scatter'
@@ -42,16 +48,21 @@
     var layout = {
       xaxis: {
         type: 'log',
+        title: '$c$',
         autorange: true
       }, 
       yaxis: {
         type: 'log', 
         title: '$a^2+b^2$',
-        autorange: true
+        autorange: false
       }
     };
-    for (var i = 1; i < 5; ++i){
-      Plotly.plot('myDiv'+i, data, layout, {showSendToCloud: true});
+    for (var i = 1; i < 3; ++i){
+      Plotly.plot('myDiv'+i, data, layout, {showSendToCloud: false, responsive: false});
     }
+    $( "#accordion" ).accordion( "refresh" );
+  });
   </script>
 </body>
+
+  
