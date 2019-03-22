@@ -1,0 +1,28 @@
+<meta charset="UTF-8"> 
+<head>
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <script> window.PlotlyConfig = {MathJaxConfig: 'local'} </script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+  <script>
+    var trace1 = {
+      x: [.01, .1, 1, 10, 100], 
+      y: [1000, 500, 250, 125, 62.5], 
+      type: 'scatter'
+    };
+    var data = [trace1];
+    var layout = {
+      xaxis: {
+        title: '$c$',
+      }, 
+      yaxis: {
+        title: '$a^2+b^2$',
+      }
+    };
+    Plotly.plot('myDiv', data, layout, {responsive:true});
+  </script>
+</body>
